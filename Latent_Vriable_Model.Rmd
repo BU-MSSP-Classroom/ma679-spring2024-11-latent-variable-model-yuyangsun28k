@@ -95,8 +95,18 @@ ggpairs(as.data.frame(Pokemon_x_scaled))
 Apply latent variable method described in this work book. Do you find anything that you did not find before?
 
 ```{r}
-#
-#
+library(lavaan)
+library(semPlot)
+
+model <- 'CombatPower =~ HP + Attack + Defense + Sp..Atk + Sp..Def + Speed'
+
+# fit model
+fit <- cfa(model, data=Pokemon_x_scaled)
+summary(fit, standardized=TRUE, fit.measures=TRUE)
+
+# plot
+semPaths(fit, whatLabels="est", layout="tree", rotation=2)
+
 ```
 
 Comment of the result:
@@ -104,6 +114,13 @@ Comment of the result:
 ~~~
 Please write your answer in full sentences.
 
+The optimization method used was NLMINB, with a 12 parameters being estimated.
+
+The baseline model, which is the most restricted model (usually all observed variables are uncorrelated), has a much larger test statistic, indicating even worse fit as expected.
+
+The Root Mean Square Error of Approximation (RMSEA) is 0.236, which is well above the 0.05 or 0.08 thresholds for acceptable fit. The p-value for the test that the RMSEA is less than 0.05 is also 0, confirming poor fit.
+
+The Standardized Root Mean Square Residual (SRMR) is 0.094, which is close to the 0.08 cutoff for a good fit.
 
 ~~~
 
@@ -116,8 +133,18 @@ Pokemon_evo<-fread("Pokemon_evo.csv")
 
 
 ```{r}
-#
-#
+
+Pokemon_evo$Stage_1 <- factor(Pokemon_evo$Stage_1, ordered = TRUE)
+Pokemon_evo$Stage_2 <- factor(Pokemon_evo$Stage_2, ordered = TRUE)
+Pokemon_evo$Stage_3 <- factor(Pokemon_evo$Stage_3, ordered = TRUE)
+
+model <- 'evolution =~ Stage_1 + Stage_2 + Stage_3'
+
+# Fit the model
+fit <- sem(model, data = Pokemon_evo, ordered = names(Pokemon_evo))
+
+# Summarize results
+summary(fit)
 ```
 
 Comment of the result:
@@ -125,6 +152,7 @@ Comment of the result:
 ~~~
 Please write your answer in full sentences.
 
+It fits pretty bad.
 
 ~~~
 
